@@ -16,16 +16,23 @@ public class GameManager : MonoBehaviour
     public int rows = 2;
     public int cols = 3;
     public Text scoreText;
+    public Text TurnsText;
+    public GameObject GameOverPanel;
 
 
     // private
     private List<Card> cards = new List<Card>();
-    private Card firstFlippedCard = null;
-  
+    private List<Card> flippedCards = new List<Card>();
+
     private int score = 0;
-   
+    private int Turns = 0;
+
     private GridLayoutGroup gridLayoutGroup;
-                                          
+
+    // combo 
+    private int comboCount = 0;
+    private int comboMultiplier = 1;
+
 
     void Awake() 
     { 
@@ -112,41 +119,97 @@ public class GameManager : MonoBehaviour
             cards.Add(card);
         }
     }
-
     public void OnCardFlipped(Card flipped)
     {
-        if (firstFlippedCard == null)
-        {
-            firstFlippedCard = flipped;
+        if ( flippedCards.Contains(flipped) || flipped.isMatched)
             return;
-        }
 
-        StartCoroutine(CheckMatch(flipped));
+        flippedCards.Add(flipped);
+
+        // Wait until 2 cards are flipped before checking
+        if (flippedCards.Count == 2)
+        {
+            StartCoroutine(CheckMatch(flippedCards[0], flippedCards[1]));
+        }
     }
 
-    IEnumerator CheckMatch(Card second)
+    IEnumerator CheckMatch(Card first, Card second)
     {
+       
+        flippedCards.Remove(first);
+        flippedCards.Remove(second);
         yield return new WaitForSeconds(0.5f);
 
-        if (firstFlippedCard.cardId == second.cardId)
+        if (first.cardId == second.cardId)
         {
             // Match
-            firstFlippedCard.isMatched = true;
+            first.isMatched = true;
             second.isMatched = true;
-            score += 10;
-          
+
+            // combo count 
+            comboCount++;
+           
+
+            score +=  10 * comboMultiplier; // e.g., 1st combo = x2, 2nd = x3...
+
+
+            comboMultiplier = 1 + comboCount;
         }
         else
         {
             // Not match
-            firstFlippedCard.Unflip();
+            first.Unflip();
             second.Unflip();
-            if(score>0)
-            score -= 1;
-         
+
+            //reset value
+            comboCount = 0;
+            comboMultiplier = 1;
+
+            //calculate turns
+            Turns++;
+
         }
 
+        TurnsText.text = "Turns: " + Turns;
         scoreText.text = "Score: " + score;
-        firstFlippedCard = null;
+       
+
+        if (cards.All(c => c.isMatched))
+        {
+            GameOverPanel.SetActive(true);
+            Debug.Log("Game Over: All pairs matched.");
+        }
+
+    }
+
+
+    public void RestartGame()
+    {
+
+
+        // Clear existing cards from scene
+        foreach (Transform child in cardGrid)
+        {
+            Destroy(child.gameObject);
+        }
+
+        cards.Clear();
+        flippedCards.Clear();
+      
+
+        // Reset stats
+        score = 0;
+        Turns = 0;
+        comboCount = 0;
+        comboMultiplier = 1;
+
+        // Update UI
+        scoreText.text = "Score: 0";
+        TurnsText.text = "Turns: 0";
+
+        // Re-setup grid and cards
+        SetupCards();
+        GameOverPanel.SetActive(false); 
+        Debug.Log("Game Restarted");
     }
 }
