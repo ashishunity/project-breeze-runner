@@ -13,7 +13,7 @@ public class Card : MonoBehaviour
     public bool isMatched = false;
 
     private bool IscoroutineRunning;
-    private bool  facedUp;
+    private bool facedUp;
 
 
     private void Awake()
@@ -22,7 +22,7 @@ public class Card : MonoBehaviour
         button.onClick.AddListener(OnCardClicked);
         IscoroutineRunning = true;
         facedUp = true;
-        isFlipped=true;
+        isFlipped = true;
     }
 
     private void OnCardClicked()
@@ -31,7 +31,7 @@ public class Card : MonoBehaviour
 
         Flip();
         GameManager.Instance.OnCardFlipped(this);
-    
+
     }
 
     public void Flip()
@@ -42,7 +42,7 @@ public class Card : MonoBehaviour
             StartCoroutine(RotateCard());
         }
 
-      
+
     }
 
     public void Unflip()
@@ -101,7 +101,7 @@ public class Card : MonoBehaviour
 
         front_CardActive(false);
         back.SetActive(false);
-       
+
     }
     public void UnFlipInstant()
     {
@@ -109,7 +109,16 @@ public class Card : MonoBehaviour
         isFlipped = false;
         front_CardActive(false);
         back.SetActive(true);
-      
+
+    }
+    public void UnflipImmediate()
+    {
+        facedUp = true;
+        isFlipped = true;
+        isMatched = false; ;
+        front_CardActive(true);
+        back.SetActive(false);
+        transform.rotation = Quaternion.Euler(0f, 0f, 0f);
     }
 
     void front_CardActive(bool Istrue)

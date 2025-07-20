@@ -375,7 +375,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -721,7 +721,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -874,7 +874,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1281,7 +1281,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1682,7 +1682,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -2259,7 +2259,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -2658,7 +2658,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3043,7 +3043,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3157,9 +3157,10 @@ GameObject:
   m_Component:
   - component: {fileID: 2062221923}
   - component: {fileID: 2062221922}
+  - component: {fileID: 2062221926}
+  - component: {fileID: 2062221927}
   - component: {fileID: 2062221925}
   - component: {fileID: 2062221924}
-  - component: {fileID: 2062221926}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -3179,33 +3180,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7ad850a29d936049b2a840db410364e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardFaceSprites:
-  - {fileID: 1097393888, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: -1742972838, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: 1816046132, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: 1568701497, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: 1969021921, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: 1509685758, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: -805595588, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: -622050464, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: -779095043, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: -1770522663, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: 1571370405, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: 2011342526, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: 511338449, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: 742226505, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: -1035502125, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: -722772248, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: -443693903, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: -542580425, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: -2147084942, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: 2045925760, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: 1766225925, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: 1395999349, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: 407165308, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  - {fileID: -570203682, guid: 2cdae03116cc00a4cb995543dd846029, type: 3}
-  cardGrid: {fileID: 2145559573}
-  cardPrefab: {fileID: 2195349111542623965, guid: f8929d1ae84209a4da5665f5d903fd1c, type: 3}
   scoreText: {fileID: 592858992}
   TurnsText: {fileID: 914207006}
   ComboText: {fileID: 431077472}
@@ -3351,6 +3325,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f615cee412e16fa468ccf083d9e66d03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2062221927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062221921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc6b60adf3b46cc45bafa28875a19541, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cardGrid: {fileID: 2145559573}
 --- !u!1 &2145559572
 GameObject:
   m_ObjectHideFlags: 0
@@ -3429,7 +3416,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
