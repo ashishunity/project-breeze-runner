@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     [Header("UI Element")]
     public Text scoreText;
     public Text TurnsText;
+    public Text ComboText;
     public GameObject GameOverPanel;
     public GameObject MenuPanel;
     public ToggleGroup toggleGroup;
@@ -46,18 +47,25 @@ public class GameManager : MonoBehaviour
     // Select toggle group
     int selected_Level;
 
-    public  AudioManager _AudioManager;
+    //save while game is running
+    bool IsGameRunning = false;
+
+    //Object referance 
+    private  AudioManager _AudioManager;
+    private SaveLoadManager _SaveLoadManager;
 
     void Awake() 
-    { 
+    {
         Instance = this;
+        gridLayoutGroup = cardGrid.GetComponent<GridLayoutGroup>();
 
     }
 
     void Start() 
     {
-        _AudioManager= GetComponent<AudioManager>();
-        gridLayoutGroup = cardGrid.GetComponent<GridLayoutGroup>();
+        _SaveLoadManager= GetComponent<SaveLoadManager>();   
+        _AudioManager = GetComponent<AudioManager>();
+       
     }
 
     public void ConfigureGridToFit()
@@ -160,7 +168,7 @@ public class GameManager : MonoBehaviour
         {
             child.Unflip();
         }
-      
+        IsGameRunning = true;
       
     }
 
@@ -194,14 +202,15 @@ public class GameManager : MonoBehaviour
             first.isMatched = true;
             second.isMatched = true;
 
+            comboTextshow();
             // combo count 
             comboCount++;
-           
 
             score +=  10 * comboMultiplier; // e.g., 1st combo = x2, 2nd = x3...
 
 
             comboMultiplier = 1 + comboCount;
+           
 
             first.FlipInstant();
             second.FlipInstant();
@@ -234,11 +243,27 @@ public class GameManager : MonoBehaviour
             GameOverPanel.SetActive(true);
             _AudioManager.Play("gameover");
             Debug.Log("Game Over: All pairs matched.");
-           
+
+            IsGameRunning = false;
         }
 
     }
 
+
+    void comboTextshow()
+    {
+        if (comboCount < 1) return;
+        ComboText.text = "Combo\n" + comboCount;
+        ComboText.gameObject.SetActive(true);
+        StopCoroutine("ComboTextDisable");
+        StartCoroutine("ComboTextDisable");
+    }
+
+    IEnumerator ComboTextDisable()
+    {
+        yield return new WaitForSeconds(2f);
+        ComboText.gameObject.SetActive(false);
+    }
 
      void Reset()
     {
@@ -264,7 +289,9 @@ public class GameManager : MonoBehaviour
         // Update UI
         TurnsText.text = "Turns\n0";
         scoreText.text = "Score\n0" ;
-        
+
+        // Game running reset bool 
+        IsGameRunning = false;
 
         Debug.Log("Game Data Reset");
 
@@ -297,5 +324,80 @@ public class GameManager : MonoBehaviour
         Toggle activeToggle = toggleGroup.ActiveToggles().FirstOrDefault();
         return int.Parse(activeToggle.name); 
     }
-  
-}
+
+
+
+    // Save and load logic 
+    // while game running user quit the game it's automatically save game and if user in menu aur game over state, game will not save 
+
+    private void OnApplicationQuit()
+    {
+        if (IsGameRunning)
+            SaveData();
+    }
+
+
+    void SaveData()
+    {
+        SaveData data = new SaveData();
+        data.rows = rows;
+        data.cols = cols;
+        data.score = score;
+        data.Turns = Turns;
+        data.combo = comboCount;
+        data.selectedLevel = selected_Level;
+        data.shuffledCardIds = cards.Select(c => c.cardId).ToList();
+        data.matchedCardIndices = cards
+            .Select((c, i) => new { c, i })
+            .Where(x => x.c.isMatched)
+            .Select(x => x.i)
+            .ToList();
+
+        _SaveLoadManager.SaveGame(data);
+
+    }
+
+
+    // loading previouse state of the game 
+    public void LoadGame()
+    {
+
+        MenuPanel.SetActive(false);
+        string json = PlayerPrefs.GetString("savegame");
+        PlayerPrefs.DeleteKey("savegame");
+        SaveData data = JsonUtility.FromJson<SaveData>(json);
+
+        rows = data.rows;
+        cols = data.cols;
+        score = data.score;
+        Turns = data.Turns;
+        comboCount = data.combo;
+        selected_Level = data.selectedLevel;
+        TurnsText.text = "Turns\n" + Turns;
+        scoreText.text = "Score\n" + score;
+
+        cards.Clear(); // clear old
+        ConfigureGridToFit();
+        for (int i = 0; i < data.shuffledCardIds.Count; i++)
+        {
+            GameObject obj = Instantiate(cardPrefab, cardGrid);
+            Card card = obj.GetComponent<Card>();
+            card.cardId = data.shuffledCardIds[i];
+            card.SetCardFace(cardFaceSprites[card.cardId]);
+            card.UnFlipInstant();
+
+            if (data.matchedCardIndices.Contains(i))
+            {
+                card.isMatched = true;
+                card.FlipInstant(); // You should implement this: show matched state instantly
+            }
+
+            cards.Add(card);
+        }
+
+        IsGameRunning = true;
+
+        Debug.Log("Game Data Load! ");
+    }
+
+ }
