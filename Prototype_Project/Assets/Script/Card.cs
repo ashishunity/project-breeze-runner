@@ -15,12 +15,14 @@ public class Card : MonoBehaviour
     private bool IscoroutineRunning;
     private bool  facedUp;
 
+
     private void Awake()
     {
         button = GetComponent<Button>();
         button.onClick.AddListener(OnCardClicked);
         IscoroutineRunning = true;
-        facedUp = false;
+        facedUp = true;
+        isFlipped=true;
     }
 
     private void OnCardClicked()
@@ -39,6 +41,8 @@ public class Card : MonoBehaviour
         {
             StartCoroutine(RotateCard());
         }
+
+      
     }
 
     public void Unflip()
@@ -66,7 +70,7 @@ public class Card : MonoBehaviour
                 transform.rotation = Quaternion.Euler(0f, i, 0f);
                 if (i == 90f)
                 {
-                    front.SetActive(true);
+                    front_CardActive(true);
                     back.SetActive(false);
                 }
                 yield return new WaitForSeconds(0.01f);
@@ -80,7 +84,7 @@ public class Card : MonoBehaviour
                 transform.rotation = Quaternion.Euler(0f, i, 0f);
                 if (i == 90f)
                 {
-                    front.SetActive(false);
+                    front_CardActive(false);
                     back.SetActive(true);
                 }
                 yield return new WaitForSeconds(0.01f);
@@ -90,5 +94,27 @@ public class Card : MonoBehaviour
         IscoroutineRunning = true;
 
         facedUp = !facedUp;
+    }
+
+    public void FlipInstant()
+    {
+
+        front_CardActive(false);
+        back.SetActive(false);
+       
+    }
+    public void UnFlipInstant()
+    {
+        facedUp = false;
+        isFlipped = false;
+        front_CardActive(false);
+        back.SetActive(true);
+      
+    }
+
+    void front_CardActive(bool Istrue)
+    {
+        front.SetActive(Istrue);
+        front.transform.parent.gameObject.SetActive(Istrue);
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.Rendering.DebugUI.Table;
@@ -13,12 +14,20 @@ public class GameManager : MonoBehaviour
     public List<Sprite> cardFaceSprites;
     public Transform cardGrid;
     public GameObject cardPrefab;
-    public int rows = 2;
-    public int cols = 3;
+   
+   
+
+    [Header("UI Element")]
     public Text scoreText;
     public Text TurnsText;
     public GameObject GameOverPanel;
+    public GameObject MenuPanel;
+    public ToggleGroup toggleGroup;
 
+
+    // rows col
+    private int rows = 2;
+    private int cols = 3;
 
     // private
     private List<Card> cards = new List<Card>();
@@ -32,22 +41,28 @@ public class GameManager : MonoBehaviour
     // combo 
     private int comboCount = 0;
     private int comboMultiplier = 1;
+    private float CardRevealTime;
 
+    // Select toggle group
+    int selected_Level;
+
+    public  AudioManager _AudioManager;
 
     void Awake() 
     { 
-        Instance = this; 
+        Instance = this;
+
     }
 
     void Start() 
     {
+        _AudioManager= GetComponent<AudioManager>();
         gridLayoutGroup = cardGrid.GetComponent<GridLayoutGroup>();
-        ConfigureGridToFit();
-        SetupCards(); 
     }
 
     public void ConfigureGridToFit()
     {
+      
         RectTransform rt = cardGrid.GetComponent<RectTransform>();
 
         float spacing = 10f; // desired spacing between cards
@@ -69,10 +84,21 @@ public class GameManager : MonoBehaviour
         gridLayoutGroup.spacing = new Vector2(spacing, spacing);
     }
 
-    void SetupCards()
+   public void SetupCards()
     {
-      
 
+        if (toggleGroup.IsActive())
+            selected_Level = GetToggleLevel();
+
+        // This logic could be implemented using a switch statement, but we've optimized the code for better performance and readability.
+        //Set rows col according to radio button choose in menu 
+        rows = selected_Level + 1;// eg. 2 *3 , 3*4, 4*5 , 5*6 
+        cols = selected_Level + 2;
+        CardRevealTime = 1.5f * selected_Level; // eg. 1.5f * 1 , 1.5f * 2 
+
+        MenuPanel.SetActive(false);
+
+        ConfigureGridToFit();
 
         int totalPairs = (rows * cols)/2 ;
        
@@ -81,7 +107,7 @@ public class GameManager : MonoBehaviour
         if (cardFaceSprites.Count < totalPairs)
         {
             int count = cardFaceSprites.Count;
-            print("Not enough card face sprites assigned!");
+            print("Not enough card face sprites assigned!" + totalPairs);
             // Expand sprite list 
             int i = 0;
             while (cardFaceSprites.Count < totalPairs)
@@ -116,15 +142,37 @@ public class GameManager : MonoBehaviour
             Card card = obj.GetComponent<Card>();
             card.cardId = id;
             card.SetCardFace(idToSprite[id]);
+           
             cards.Add(card);
         }
+
+
+
+        // To display all cards briefly at the start of each level  and have the reveal duration change based on level
+        Invoke("InnokeAfterSomeTime", CardRevealTime);
     }
+
+
+    
+    void InnokeAfterSomeTime()
+    {
+        foreach (Card child in cards)
+        {
+            child.Unflip();
+        }
+      
+      
+    }
+
     public void OnCardFlipped(Card flipped)
     {
         if ( flippedCards.Contains(flipped) || flipped.isMatched)
             return;
 
+       
         flippedCards.Add(flipped);
+
+        _AudioManager.Play("flip");
 
         // Wait until 2 cards are flipped before checking
         if (flippedCards.Count == 2)
@@ -154,6 +202,11 @@ public class GameManager : MonoBehaviour
 
 
             comboMultiplier = 1 + comboCount;
+
+            first.FlipInstant();
+            second.FlipInstant();
+
+            _AudioManager.Play("match");
         }
         else
         {
@@ -168,22 +221,26 @@ public class GameManager : MonoBehaviour
             //calculate turns
             Turns++;
 
+            _AudioManager.Play("mismatch");
+
         }
 
-        TurnsText.text = "Turns: " + Turns;
-        scoreText.text = "Score: " + score;
+        TurnsText.text = "Turns\n" + Turns;
+        scoreText.text = "Score\n" + score;
        
 
         if (cards.All(c => c.isMatched))
         {
             GameOverPanel.SetActive(true);
+            _AudioManager.Play("gameover");
             Debug.Log("Game Over: All pairs matched.");
+           
         }
 
     }
 
 
-    public void RestartGame()
+     void Reset()
     {
 
 
@@ -202,14 +259,43 @@ public class GameManager : MonoBehaviour
         Turns = 0;
         comboCount = 0;
         comboMultiplier = 1;
+      
 
         // Update UI
-        scoreText.text = "Score: 0";
-        TurnsText.text = "Turns: 0";
+        TurnsText.text = "Turns\n0";
+        scoreText.text = "Score\n0" ;
+        
+
+        Debug.Log("Game Data Reset");
+
+    }
+
+
+    public void RestartGame()
+    {
+        Reset();
 
         // Re-setup grid and cards
         SetupCards();
-        GameOverPanel.SetActive(false); 
+        GameOverPanel.SetActive(false);
+
         Debug.Log("Game Restarted");
     }
+
+    public void Menu()
+    {
+        Reset();
+        GameOverPanel.SetActive(false );
+        MenuPanel.SetActive(true);
+
+    }
+
+ 
+    int GetToggleLevel()
+    {
+      
+        Toggle activeToggle = toggleGroup.ActiveToggles().FirstOrDefault();
+        return int.Parse(activeToggle.name); 
+    }
+  
 }
